@@ -1,0 +1,22 @@
+<header>
+    <div class="header-nav">
+      <a href="/" class="header-logo">ToDo</a>
+      <% if (locals.url  === "/list") { %>
+        <p class="now-page">> リスト</p>
+      <% } else if (locals.url  === "/trash") { %>
+        <p class="now-page">> ゴミ箱</p>
+      <% } %>
+      <p class="greet">ようこそ、<%= locals.username %>さん</p>
+      <ul>
+        <% if (locals.isLoggedIn) { %>
+          <li><a href="/list">リスト</a></li>
+          <li><a href="/trash">ゴミ箱</a></li>
+          <li><a href="/logout">ログアウト</a></li>
+        <% } else { %>
+          <li><a href="/signup">新規登録</a></li>
+          <li><a href="/login">ログイン</a></li>
+        <% } %>
+      </ul>
+    </div>
+  </header>
+  

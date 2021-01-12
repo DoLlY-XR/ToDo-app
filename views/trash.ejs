@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>ToDo</title>
+    <link rel="stylesheet" href="/css/style.css">
+  </head>
+  <body>
+    <%- include('header'); %>
+    <% let No = 0; %>
+    <% let itemId = 0; %>
+
+    <% if (trash.length === 0) { %>
+      <div class="list-wrapper">
+        <div class="container">
+          <h3>ゴミ箱は空です</h3>
+        </div>
+      </div>
+    <% } %>
+    
+    <% for (;No < trash.length;) { %>
+      <% const categoryId = trash[No].categoryId; %>
+      <% const category = trash[No].category; %>
+      <div class="list-wrapper">
+        <div class="container">
+          <div class="list-contents">
+            <div class="container-header">
+              <h1>カテゴリ: <%= category %></h1>
+            </div>
+            <table class="table-wrapper">
+              <tr>
+                <th class="bool-column"></th>
+                <th class="table-head task-column">タスク名</th>
+                <th class="table-head imit-column">目標期限日</th>
+                <th class="table-head start-column">追加日</th>
+                <th class="table-head goal-column">達成日</th>
+                <th class="edit-column"></th>
+                <th class="delete-column"></th>
+              </tr>
+              <% trash.forEach((trash) => { %>
+                <% if (trash.categoryId === categoryId) { %>
+                  <% let year = null; %>
+                  <% let month  = null; %>
+                  <% let day = null; %>
+                  <% let limit_date_toString = null; %>
+                  <% let start_date_toString = null; %>
+                  <% let goal_date_toString = null; %>
+    
+                  <% if (trash.limit_date !== null) { %>
+                    <% year = trash.limit_date.getFullYear(); %>
+                    <% month = trash.limit_date.getMonth() + 1; %>
+                    <% day = trash.limit_date.getDate(); %>
+                    <% limit_date_toString = year + "年" + month + "月" + day + "日"; %>
+                  <% } %>
+    
+                  <% if (trash.start_date !== null) { %>
+                    <% year = trash.start_date.getFullYear(); %>
+                    <% month = trash.start_date.getMonth() + 1; %>
+                    <% day = trash.start_date.getDate(); %>
+                    <% start_date_toString = year + "年" + month + "月" + day + "日"; %>
+                  <% } %>
+    
+                  <% if (trash.goal_date !== null) { %>
+                    <% year = trash.goal_date.getFullYear(); %>
+                    <% month = trash.goal_date.getMonth() + 1; %>
+                    <% day = trash.goal_date.getDate(); %>
+                    <% goal_date_toString = year + "年" + month + "月" + day + "日"; %>
+                  <% } %>
+                  <tr class="table-body" id="item<%= trash.id %>">
+                    <td class="bool-column">
+                      <% if (trash.finish_task) { %>
+                        <img src="/images/clear_stamp.png">
+                      <% } %>
+                    </td>
+                    <td class="task-column"><p><%= trash.task %></p></td>
+                    <td class="limit-column"><p><%= limit_date_toString %></p></td>
+                    <td class="start-column"><p><%= start_date_toString %></p></td>
+                    <td class="goal-column"><p><%= goal_date_toString %></p></td>
+                    <td class="edit-column">
+                      <a href="/return/<%= trash.id %>">戻す</a>
+                    </td>
+                    <td class="delete-column">
+                      <form action="/delete/<%= trash.id %>" method="post">
+                        <input type="hidden" name="itemId" value=<%= itemId %>>
+                        <input type="submit" value="削除">
+                      </form>
+                    </td>
+                  </tr>
+                  <%  No++; %>
+                  <% itemId = trash.id; %>
+                <% } %>
+              <% }) %>
+            </table>
+            <div class="list-create">
+              <a href="/restore/<%= category %>" class="new btn">リストに全て戻す</a>
+            </div>
+            <div class="list-delete">
+              <form action="/erasure/<%= categoryId %>" method="post">
+                <input type="submit" value="ゴミ箱から全て削除" class="remove btn">
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    <% } %>
+  </body>
+</html>

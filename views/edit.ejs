@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>ToDo</title>
+    <link rel="stylesheet" href="/css/style.css">
+  </head>
+  <body>
+    <div class="sign">
+      <div class="container">
+        <h1><a href="/">ToDo</a></h1>
+        <div class="panel">
+          <h2><%= category %>リストを編集</h2>
+          <% if (errors.length > 0) { %>
+            <ul class="errors">
+              <% errors.forEach(error => { %>
+                <li><%= error %></li>
+              <% }); %>
+            </ul>
+          <% } %>
+          <% let new_limit_date = null; %>
+
+          <% if (limit_date !== null) { %>
+            <% const year = limit_date.getFullYear(); %>
+            <% const month = ('00' + (limit_date.getMonth() + 1)).slice(-2); %>
+            <% const day = ('00' + (limit_date.getDate())).slice(-2); %>
+            <% new_limit_date = year + "-" + month + "-" + day; %>
+          <% } %>
+          <form action="/update/<%= id %>" method="post">
+            <input type="hidden" name="category" value="<%= category %>">
+            <p>タスク名</p>
+            <input type="text" name="task" value="<%= task %>">
+            <p>目標期限日</p>
+            <input type="date" name="limit_date" value="<%= new_limit_date %>">
+            <input type="submit" value="編集完了" class="btn-signup">
+            <a href="/list">もどる</a>
+          </form>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

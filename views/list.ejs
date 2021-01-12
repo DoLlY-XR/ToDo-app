@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>ToDo</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <script type="text/javascript">
+      function progress(id) {
+        var progress = document.getElementById(id);
+        
+        if(progress.style.opacity == "1") {
+          progress.style.padding = "0";
+          progress.style.height = "0";
+          progress.style.opacity = "0";
+        }
+        else {
+          progress.style.paddingTop = "20px";
+          progress.style.paddingBottom = "40px";
+          progress.style.height = "auto";
+          progress.style.opacity = "1";
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <%- include('header'); %>
+    <% let category = "Blank"; %>
+    <% let categoryId = 0; %>
+    <% let No = 0; %>
+    <% let itemId = 0; %>
+    <% let itemLength = 0; %>
+    <% let goalItem = 0; %>
+    
+    <div class="list-wrapper">
+      <div class="container">
+        <div class="list-contents">
+          <div class="container-header">
+            <div class="category-name">
+              <h1>カテゴリ: Free</h1>
+            </div>
+            <div class="category-menu">
+              <input type="checkbox" id="progress<%= categoryId %>" onChange="progress('category-progress<%= categoryId %>')">
+              <label for="progress<%= categoryId %>" class="menu progress btn">
+                <span class="progress-logo menu-logo"></span><p>進捗状況</p>
+              </label>
+            </div>
+          </div>
+          <div class="category-progress" id="category-progress<%= categoryId %>" 
+          style="height: 0; padding: 0; overflow: hidden; opacity: 0; transition: 1s;">
+            <% list.forEach((list) => { %>
+              <% if (list.categoryId === categoryId) { %>
+                <% category = "Free"; %>
+                <% itemLength++; %>
+                <% if (list.finish_task) { %>
+                  <% goalItem++; %>
+                <% } %>
+              <% } %>
+            <% }) %>
+            <h1><%= goalItem / itemLength * 100 %>% (<%= goalItem %>/<%= itemLength %>)</h1>
+            <div class="task-status">
+              <div class="current-status"><img style="--position: <%= goalItem / itemLength * 100 %>%;" src="/images/progress-logo-hover.png"></div>
+            </div>
+            <div class="distance">
+              <div class="start">
+                <div class="point"></div>
+                <P>START</P>
+              </div>
+              <div class="road"></div>
+              <div class="goal">
+                <div class="point"></div>
+                <p>GOAL</p>
+              </div>
+            </div>
+          </div>
+          <table class="table-wrapper">
+            <tr>
+              <th class="bool-column"></th>
+              <th class="table-head task-column">タスク名</th>
+              <th class="table-head imit-column">目標期限日</th>
+              <th class="table-head start-column">追加日</th>
+              <th class="table-head goal-column">達成日</th>
+              <th class="edit-column"></th>
+              <th class="delete-column"></th>
+            </tr>
+            <% list.forEach((list) => { %>
+              <% if (list.categoryId === categoryId) { %>
+                <% let year = null; %>
+                <% let month  = null; %>
+                <% let day = null; %>
+                <% let limit_date_toString = null; %>
+                <% let start_date_toString = null; %>
+                <% let goal_date_toString = null; %>
+
+                <% if (list.limit_date !== null) { %>
+                  <% year = list.limit_date.getFullYear(); %>
+                  <% month = list.limit_date.getMonth() + 1; %>
+                  <% day = list.limit_date.getDate(); %>
+                  <% limit_date_toString = year + "年" + month + "月" + day + "日"; %>
+                <% } %>
+
+                <% if (list.start_date !== null) { %>
+                  <% year = list.start_date.getFullYear(); %>
+                  <% month = list.start_date.getMonth() + 1; %>
+                  <% day = list.start_date.getDate(); %>
+                  <% start_date_toString = year + "年" + month + "月" + day + "日"; %>
+                <% } %>
+
+                <% if (list.goal_date !== null) { %>
+                  <% year = list.goal_date.getFullYear(); %>
+                  <% month = list.goal_date.getMonth() + 1; %>
+                  <% day = list.goal_date.getDate(); %>
+                  <% goal_date_toString = year + "年" + month + "月" + day + "日"; %>
+                <% } %>
+                <tr class="table-body" id="item<%= list.id %>">
+                  <td class="bool-column">
+                    <a href="/goal/<%= list.id %>" id="goal<%= list.id %>" class="goal-bool">
+                    <% if (list.finish_task) { %>
+                      <img src="/images/clear_stamp.png">
+                    <% } %>
+                    </a>
+                  </td>
+                  <td class="task-column">
+                    <% if (list.finish_task) { %>
+                      <p style="
+                      background-image: linear-gradient(#fe3464, #fe3464);
+                      background-position: 0 50%;
+                      background-size: 100% 2px;
+                      background-repeat: repeat-x;
+                      color: #888;
+                      margin: 0 0.4em;
+                      text-decoration: none;
+                      "><%= list.task %></p>
+                    <% }else { %>
+                      <p><%= list.task %></p>
+                    <% } %>
+                  </td>
+                  <td class="limit-column">
+                    <% const today = new Date(); %>
+                    <% if (list.limit_date <= today) { %>
+                      <p style="color: red;"><%= limit_date_toString %></p>
+                    <% }else { %>
+                      <p><%= limit_date_toString %></p>
+                    <% } %>
+                  </td>
+                  <td class="start-column"><p><%= start_date_toString %></p></td>
+                  <td class="goal-column"><p><%= goal_date_toString %></p></td>
+                  <td class="edit-column">
+                    <a href="/edit/<%= list.id %>">編集</a>
+                  </td>
+                  <td class="delete-column">
+                    <form action="/move/<%= list.id %>" method="post">
+                      <input type="hidden" name="itemId" value=<% itemId %>>
+                      <input type="submit" value="削除">
+                    </form>
+                  </td>
+                </tr>
+                <%  No++; %>
+                <% itemId = list.id %>
+              <% } %>
+            <% }) %>
+          </table>
+          <div class="list-create">
+            <a href="/add/Free" class="new btn">タスクを追加</a>
+          </div>
+          <% if (category === "Free") { %>
+            <div class="list-delete">
+              <form action="/remove/<%= categoryId %>" method="post">
+                <input type="submit" value="全て削除" class="remove btn">
+              </form>
+            </div>
+          <% } %>
+        </div>
+      </div>
+    </div>
+    <% for (;No < list.length;) { %>
+      <% categoryId = list[No].categoryId; %>
+      <% category = list[No].category; %>
+      <% itemLength = 0; %>
+      <% goalItem = 0; %>
+      <div class="list-wrapper">
+        <div class="container">
+          <div class="list-contents">
+            <div class="container-header">
+              <div class="category-name">
+                <h1>カテゴリ: <%= category %></h1>
+              </div>
+              <div class="category-menu">
+                <input type="checkbox" id="progress<%= categoryId %>" onChange="progress('category-progress<%= categoryId %>')">
+                <label for="progress<%= categoryId %>" class="menu progress btn">
+                  <span class="progress-logo menu-logo"></span><p>進捗状況</p>
+                </label>
+              </div>
+            </div>
+            <div class="category-progress" id="category-progress<%= categoryId %>" 
+            style="height: 0; padding: 0; overflow: hidden; opacity: 0; transition: 1s;">
+              <% list.forEach((list) => { %>
+                <% if (list.categoryId === categoryId) { %>
+                  <% itemLength++; %>
+                  <% if (list.finish_task) { %>
+                    <% goalItem++; %>
+                  <% } %>
+                <% } %>
+              <% }) %>
+              <h1><%= goalItem / itemLength * 100 %>% (<%= goalItem %>/<%= itemLength %>)</h1>
+              <div class="task-status">
+                <div class="current-status"><img style="--position: <%= goalItem / itemLength * 100 %>%;" src="/images/progress-logo-hover.png"></div>
+              </div>
+              <div class="distance">
+                <div class="start">
+                  <div class="point"></div>
+                  <P>START</P>
+                </div>
+                <div class="road"></div>
+                <div class="goal">
+                  <div class="point"></div>
+                  <p>GOAL</p>
+                </div>
+              </div>
+            </div>
+            <table class="table-wrapper">
+              <tr>
+                <th class="bool-column"></th>
+                <th class="table-head task-column">タスク名</th>
+                <th class="table-head imit-column">目標期限日</th>
+                <th class="table-head start-column">追加日</th>
+                <th class="table-head goal-column">達成日</th>
+                <th class="edit-column"></th>
+                <th class="delete-column"></th>
+              </tr>
+              <% list.forEach((list) => { %>
+                <% if (list.categoryId === categoryId) { %>
+                  <% let year = null; %>
+                  <% let month  = null; %>
+                  <% let day = null; %>
+                  <% let limit_date_toString = null; %>
+                  <% let start_date_toString = null; %>
+                  <% let goal_date_toString = null; %>
+    
+                  <% if (list.limit_date !== null) { %>
+                    <% year = list.limit_date.getFullYear(); %>
+                    <% month = list.limit_date.getMonth() + 1; %>
+                    <% day = list.limit_date.getDate(); %>
+                    <% limit_date_toString = year + "年" + month + "月" + day + "日"; %>
+                  <% } %>
+    
+                  <% if (list.start_date !== null) { %>
+                    <% year = list.start_date.getFullYear(); %>
+                    <% month = list.start_date.getMonth() + 1; %>
+                    <% day = list.start_date.getDate(); %>
+                    <% start_date_toString = year + "年" + month + "月" + day + "日"; %>
+                  <% } %>
+    
+                  <% if (list.goal_date !== null) { %>
+                    <% year = list.goal_date.getFullYear(); %>
+                    <% month = list.goal_date.getMonth() + 1; %>
+                    <% day = list.goal_date.getDate(); %>
+                    <% goal_date_toString = year + "年" + month + "月" + day + "日"; %>
+                  <% } %>
+                  <tr class="table-body" id="item<%= list.id %>">
+                    <td class="bool-column">
+                      <a href="/goal/<%= list.id %>" class="goal-bool">
+                      <% if (list.finish_task) { %>
+                        <img src="/images/clear_stamp.png">
+                      <% } %>
+                      </a>
+                    </td>
+                    <td class="task-column">
+                      <% if (list.finish_task) { %>
+                        <p style="
+                        background-image: linear-gradient(#fe3464, #fe3464);
+                        background-position: 0 50%;
+                        background-size: 100% 2px;
+                        background-repeat: repeat-x;
+                        color: #888;
+                        margin: 0 0.4em;
+                        text-decoration: none;
+                        "><%= list.task %></p>
+                      <% }else { %>
+                        <p><%= list.task %></p>
+                      <% } %>
+                    </td>
+                    <td class="limit-column">
+                      <% const today = new Date(); %>
+                      <% if (list.limit_date <= today) { %>
+                        <p style="color: red;"><%= limit_date_toString %></p>
+                      <% }else { %>
+                        <p><%= limit_date_toString %></p>
+                      <% } %>
+                    </td>
+                    <td class="start-column"><p><%= start_date_toString %></p></td>
+                    <td class="goal-column"><p><%= goal_date_toString %></p></td>
+                    <td class="edit-column">
+                      <a href="/edit/<%= list.id %>">編集</a>
+                    </td>
+                    <td class="delete-column">
+                      <form action="/move/<%= list.id %>" method="post">
+                        <input type="hidden" name="itemId" value=<%= itemId %>>
+                        <input type="submit" value="削除">
+                      </form>
+                    </td>
+                  </tr>
+                  <%  No++; %>
+                  <% itemId = list.id; %>
+                <% } %>
+              <% }) %>
+            </table>
+            <div class="list-create">
+              <a href="/add/<%= category %>" class="new btn">タスクを追加</a>
+            </div>
+            <div class="list-delete">
+              <form action="/remove/<%= categoryId %>" method="post">
+                <input type="submit" value="カテゴリを削除" class="remove btn">
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    <% } %>
+    <div class="list-wrapper">
+      <div class="container">
+        <div class="list-contents">
+          <div class="list-create">
+            <a href="/new/<%= categoryId %>" class="new btn">カテゴリを追加</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

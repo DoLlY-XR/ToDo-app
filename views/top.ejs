@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>ToDo</title>
+    <link rel="stylesheet" href="/css/style.css">
+  </head>
+  <body>
+    <%- include('header'); %>
+    <main>
+      <div class="top-wrapper">
+        <div class="container">
+          <div class="Quotations-japanese">
+            <h1>人間は、目標を追い求める動物である。
+            <br>目標へ到達しようと努力することによってのみ、
+            <br>人生が意味あるものとなる。
+            </h1>
+            <h3>アリストテレス</h3>
+          </div>
+          <div class="Quotations-english">
+            <h2>Man is a goal seeking animal. His life
+            <br>only has meaning if he is reaching out
+            <br>and striving for his goals.
+            </h2>
+            <h3>Aristoteles</h3>
+          </div>
+        </div>
+      </div>
+      <div class="second-wrapper">
+        <div class="container">
+          <div class="message">
+            <h1>ToDoで目標を定めよう</h1>
+          </div>
+          <div class="move-page">
+            <% if (locals.isLoggedIn) { %>
+              <div class="send-link">
+                <a href="/list" class="btn list"><div class="list-logo link-logo"></div>リストを編集する</a>
+              </div>
+              <div class="send-link">
+                <a href="/trash" class="btn trash"><div class="trash-logo link-logo"></div>ゴミ箱を整理する</a>
+              </div>
+            <% } else { %>
+              <div class="send-link">
+                <a href="/signup" class="btn signup">新規登録</a>
+              </div>
+              <div class="send-link">
+                <a href="/login" class="btn login">ログイン</a>
+              </div>
+            <% } %>
+          </div>
+        </div>
+      </div>
+    </main>
+  </body>
+</html>

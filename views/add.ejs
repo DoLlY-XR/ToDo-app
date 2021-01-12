@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>ToDo</title>
+    <link rel="stylesheet" href="/css/style.css">
+  </head>
+  <body>
+    <% let categoryId = 0; %>
+    <% const flag = false; %>
+    <% list.forEach((list) => { %>
+      <% categoryId = list.categoryId %>
+    <% }) %>
+    <div class="sign">
+      <div class="container">
+        <div class="title-content">
+          <h1 class="page-title"><a href="/">ToDo</a></h1>
+          <p class="page-title">></p>
+          <p class="page-title"><a href="/list">リスト</a></p>
+        </div>
+        <div class="panel">
+          <h2><%= category %>リストに追加</h2>
+          <% if (errors.length > 0) { %>
+            <ul class="errors">
+              <% errors.forEach(error => { %>
+                <li><%= error %></li>
+              <% }); %>
+            </ul>
+          <% } %>
+          <form action="/create" method="post">
+            <input type="hidden" name="create" value=<%= flag %>
+            <p>タスク名</p>
+            <input type="hidden" name="category" value=<%= category %>>
+            <input type="text" name="task">
+            <p>目標期限日</p>
+            <input type="date" name="limit_date">
+            <input type="hidden" name="categoryId" value=<%= categoryId %>>
+            <input type="submit" value="タスクを追加" class="btn-signup">
+            <a href="/list">もどる</a>
+          </form>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
